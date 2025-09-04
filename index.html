@@ -1,43 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Current Time</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: transparent;
-        }
-        #clock {
-            font-size: 3rem;
-            color: #333;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draggable Clock</title>
+<style>
+    body {
+        height: 100vh;
+        margin: 0;
+        background-color: transparent;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+    #clock {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        color: #333;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        cursor: move;
+        user-select: none;
+    }
+</style>
 </head>
 <body>
-    <div id="clock">Loading...</div>
+<div id="clock">Loading...</div>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-        }
+<script>
+// Clock update
+function updateTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+updateTime();
+setInterval(updateTime, 1000);
 
-        // Update time immediately and then every second
-        updateTime();
-        setInterval(updateTime, 1000);
-    </script>
+// Drag functionality
+const clock = document.getElementById('clock');
+let offsetX, offsetY, isDragging = false;
+
+clock.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - clock.offsetLeft;
+    offsetY = e.clientY - clock.offsetTop;
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        clock.style.left = `${e.clientX - offsetX}px`;
+        clock.style.top = `${e.clientY - offsetY}px`;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+</script>
 </body>
 </html>
