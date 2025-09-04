@@ -14,9 +14,6 @@
     }
     #clock {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         font-size: 3rem;
         color: #333;
         padding: 20px;
@@ -43,24 +40,46 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-// Drag functionality
+// Drag functionality with localStorage
 const clock = document.getElementById('clock');
 let offsetX, offsetY, isDragging = false;
+
+// Load saved position
+window.addEventListener('load', () => {
+    const savedX = localStorage.getItem('clockX');
+    const savedY = localStorage.getItem('clockY');
+    if (savedX && savedY) {
+        clock.style.left = savedX + "px";
+        clock.style.top = savedY + "px";
+    } else {
+        // Default: center of screen
+        clock.style.left = "50%";
+        clock.style.top = "50%";
+        clock.style.transform = "translate(-50%, -50%)";
+    }
+});
 
 clock.addEventListener('mousedown', (e) => {
     isDragging = true;
     offsetX = e.clientX - clock.offsetLeft;
     offsetY = e.clientY - clock.offsetTop;
+    clock.style.transform = ""; // remove centering if user moves it
 });
 
 document.addEventListener('mousemove', (e) => {
     if (isDragging) {
-        clock.style.left = `${e.clientX - offsetX}px`;
-        clock.style.top = `${e.clientY - offsetY}px`;
+        const newX = e.clientX - offsetX;
+        const newY = e.clientY - offsetY;
+        clock.style.left = `${newX}px`;
+        clock.style.top = `${newY}px`;
     }
 });
 
 document.addEventListener('mouseup', () => {
+    if (isDragging) {
+        localStorage.setItem('clockX', clock.offsetLeft);
+        localStorage.setItem('clockY', clock.offsetTop);
+    }
     isDragging = false;
 });
 </script>
